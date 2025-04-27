@@ -2,6 +2,10 @@ import express from 'express';
 import Post from '../models/Post.js'; 
 import authMiddleware from '../middlewares/authMiddleware.js'; 
 import Comment from '../models/Comment.js';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+
 const router = express.Router();
 
 // Configure Cloudinary
