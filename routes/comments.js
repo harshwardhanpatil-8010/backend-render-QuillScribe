@@ -10,7 +10,7 @@ router.post('/add', authMiddleware, async (req, res) => {
         const { postId, text } = req.body;
         const newComment = new Comment({
             postId,
-            author: req.userId,
+            author: req.user.userId,
             text,
         });
         await newComment.save();
