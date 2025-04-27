@@ -16,6 +16,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
 

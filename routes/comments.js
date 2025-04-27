@@ -1,17 +1,23 @@
 import express from 'express';
-import Comment from '../models/Comment.js';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import Comment from '../../models/Comment.js';
+import authMiddleware from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+// Add Comment
 router.post('/add', authMiddleware, async (req, res) => {
-    const { postId, content } = req.body;
     try {
-        const comment = new Comment({ post: postId, user: req.user.id, content });
-        await comment.save();
-        res.status(201).json(comment);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        const { postId, text } = req.body;
+        const newComment = new Comment({
+            postId,
+            author: req.userId,
+            text,
+        });
+        await newComment.save();
+        res.status(201).json({ message: 'Comment added', comment: newComment });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
     }
 });
 
