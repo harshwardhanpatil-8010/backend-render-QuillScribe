@@ -1,6 +1,6 @@
 import express from 'express';
-import Post from '../../models/Post.js'; // adjust the path if needed
-import authMiddleware from '../../middlewares/authMiddleware.js'; // adjust the path if needed
+import Post from '../models/Post.js'; // adjust the path if needed
+import authMiddleware from '../middlewares/authMiddleware.js'; // adjust the path if needed
 
 const router = express.Router();
 
