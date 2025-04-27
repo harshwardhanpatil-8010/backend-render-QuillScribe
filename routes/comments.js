@@ -4,7 +4,7 @@ import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// Add Comment
+
 router.post('/add', authMiddleware, async (req, res) => {
     try {
         const { postId, text } = req.body;
