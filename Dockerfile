@@ -1,28 +1,36 @@
+# Stage 1: Build
+# Use an official Node.js runtime as a parent image. We use a specific version for reproducibility.
 FROM node:20-alpine AS base
 
-WORKDIR /app
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-# Install dependencies in a separate stage for better caching
-FROM base AS dependencies
+# Copy package.json and package-lock.json first to leverage Docker's layer caching.
+# This step will only be re-run if these files change.
 COPY package*.json ./
-# Use npm ci for clean, reproducible installs in production
-RUN npm ci
 
-# Final production stage
-FROM base AS final
-
-# Copy only production dependencies from the previous stage
-COPY --from=dependencies /app/node_modules ./node_modules
+# Install production dependencies using npm ci for a clean, reliable build
+RUN npm ci --only=production
 
 # Copy the rest of the application source code
 COPY . .
 
-# Run as a non-root user for better security
-USER node
+# Stage 2: Production
+# Use a smaller, more secure base image for the final production image
+FROM node:20-alpine
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=5000
+WORKDIR /usr/src/app
+
+# Copy dependencies and source code from the 'base' stage
+COPY --from=base /usr/src/app .
+
+# Create a non-root user and group for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Chown the uploads directory if it exists, so the app can write to it
+RUN mkdir -p uploads && chown -R appuser:appgroup uploads
+
+# Switch to the non-root user
+USER appuser
 
 # Expose the port the app runs on
 EXPOSE 5000
